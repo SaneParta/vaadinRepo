@@ -1,0 +1,28 @@
+body {
+    background-color: #e3f2fd;
+    color: #0d47a1;
+}
+
+
+vaadin-button {
+    background-color: #1976d2;
+    color: white;
+    border-radius: 5px;
+}
+
+vaadin-button:hover {
+    background-color: #1565c0;
+}
+
+a {
+    color: #1976d2;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+
+h1, h2, h3 {
+    color: #0d47a1;
+}

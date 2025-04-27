@@ -1,27 +1,30 @@
 package com.example.application.views;
 
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Footer;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Header;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.SvgIcon;
 import com.vaadin.flow.component.orderedlayout.Scroller;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.sidenav.SideNav;
 import com.vaadin.flow.component.sidenav.SideNavItem;
-import com.vaadin.flow.router.Layout;
+import com.vaadin.flow.router.*;
+import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import com.vaadin.flow.server.menu.MenuConfiguration;
 import com.vaadin.flow.server.menu.MenuEntry;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import java.util.List;
 
-/**
- * The main view is a top-level placeholder for other views.
- */
 @Layout
 @AnonymousAllowed
+@CssImport("./themes/global-styles.css")
 public class MainLayout extends AppLayout {
 
     private H1 viewTitle;
@@ -42,30 +45,33 @@ public class MainLayout extends AppLayout {
         addToNavbar(true, toggle, viewTitle);
     }
 
-    private void addDrawerContent() {
-        Span appName = new Span("VaadinProjekti");
-        appName.addClassNames(LumoUtility.FontWeight.SEMIBOLD, LumoUtility.FontSize.LARGE);
-        Header header = new Header(appName);
-
-        Scroller scroller = new Scroller(createNavigation());
-
-        addToDrawer(header, scroller, createFooter());
+    private void logOut() {
+        VaadinSession.getCurrent().getSession().invalidate();
+        UI.getCurrent().navigate("login");
     }
 
-    private SideNav createNavigation() {
-        SideNav nav = new SideNav();
+    private void addDrawerContent() {
+        Button kirjauduUlos = new Button("Kirjaudu Ulos");
 
-        List<MenuEntry> menuEntries = MenuConfiguration.getMenuEntries();
-        menuEntries.forEach(entry -> {
-            if (entry.icon() != null) {
-                nav.addItem(new SideNavItem(entry.title(), entry.path(), new SvgIcon(entry.icon())));
-            } else {
-                nav.addItem(new SideNavItem(entry.title(), entry.path()));
-            }
+        kirjauduUlos.addClickListener(e -> {
+            logOut();
         });
 
-        return nav;
+        RouterLink etusivuLink = new RouterLink("Etusivu", EtusivuView.class);
+        RouterLink asiakasLink = new RouterLink("Asiakkaat", AsiakasView.class);
+        RouterLink ohjelmaLink = new RouterLink("Treenit", OhjelmaView.class);
+        RouterLink adminLink = new RouterLink("Admin", AdminView.class);
+
+
+        addToDrawer(new VerticalLayout(
+                etusivuLink,
+                asiakasLink,
+                ohjelmaLink,
+                adminLink,
+                kirjauduUlos
+                ));
     }
+
 
     private Footer createFooter() {
         Footer layout = new Footer();
