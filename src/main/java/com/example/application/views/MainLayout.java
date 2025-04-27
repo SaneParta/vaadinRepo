@@ -15,11 +15,18 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.sidenav.SideNav;
 import com.vaadin.flow.component.sidenav.SideNavItem;
 import com.vaadin.flow.router.*;
+import com.vaadin.flow.server.VaadinServletRequest;
+import com.vaadin.flow.server.VaadinServletResponse;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 import com.vaadin.flow.server.menu.MenuConfiguration;
 import com.vaadin.flow.server.menu.MenuEntry;
 import com.vaadin.flow.theme.lumo.LumoUtility;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+
 import java.util.List;
 
 @Layout
@@ -45,16 +52,17 @@ public class MainLayout extends AppLayout {
         addToNavbar(true, toggle, viewTitle);
     }
 
-    private void logOut() {
-        VaadinSession.getCurrent().getSession().invalidate();
-        UI.getCurrent().navigate("login");
-    }
+
 
     private void addDrawerContent() {
-        Button kirjauduUlos = new Button("Kirjaudu Ulos");
 
+        Button kirjauduUlos = new Button("Kirjaudu Ulos");
         kirjauduUlos.addClickListener(e -> {
-            logOut();
+            UI ui = UI.getCurrent();
+            VaadinSession.getCurrent().getSession().invalidate(); // Sulkee sessio
+            SecurityContextHolder.clearContext(); // Tyhjennetään Spring Securityn tieto
+            ui.navigate("login");
+
         });
 
         RouterLink etusivuLink = new RouterLink("Etusivu", EtusivuView.class);

@@ -9,6 +9,7 @@ import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
+import com.vaadin.flow.server.auth.AnonymousAllowed;
 import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 
@@ -16,6 +17,7 @@ import java.awt.*;
 
 @Route(value = "Etusivu", layout = MainLayout.class)
 @PermitAll
+@AnonymousAllowed
 public class EtusivuView extends VerticalLayout {
     public EtusivuView() {
         OpenFrontPage();

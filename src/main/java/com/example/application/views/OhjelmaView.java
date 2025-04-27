@@ -148,12 +148,13 @@ public class OhjelmaView extends VerticalLayout {
         Dialog dialog = new Dialog();
         ComboBox<Asiakas> asiakasComboBox = new ComboBox<>("Valittu asiakas");
         TextField treeniteksti = new TextField("Valittu treeni");
-        MultiSelectComboBox valitutTreenit = new MultiSelectComboBox<>("Muuta valittuja treenejä");
+        MultiSelectComboBox<Liike> valitutTreenit = new MultiSelectComboBox<>("Muuta valittuja treenejä");
         Button tallenna = new Button("Tallenna");
         Button poista = new Button("Poista treeni");
 
         valitutTreenit.setItems(liikeService.getAll());
-        valitutTreenit.setItemLabelGenerator(liike -> liike.toString());
+        valitutTreenit.setItemLabelGenerator(Liike::getNimi);
+        valitutTreenit.select(treeniohjelma.getLiikkeet());
 
 
 
@@ -162,9 +163,29 @@ public class OhjelmaView extends VerticalLayout {
         asiakasComboBox.setValue(treeniohjelma.getAsiakas());
         treeniteksti.setValue(treeniohjelma.getOhjelma());
 
-        tallenna.addClickListener(e-> {
+        tallenna.addClickListener(e -> {
             treeniohjelma.setOhjelma(treeniteksti.getValue());
             treeniohjelma.setAsiakas(asiakasComboBox.getValue());
+
+            List<Liike> valitutLiiketMuokkaus = new ArrayList<>(valitutTreenit.getSelectedItems());
+
+            List<Liike> vanhatLiikkeet = treeniohjelma.getLiikkeet();
+
+
+            for (Liike vanhaLiike : vanhatLiikkeet) {
+                if (!valitutLiiketMuokkaus.contains(vanhaLiike)) {
+                    vanhaLiike.setTreeniohjelma(null);
+                    liikeService.create(vanhaLiike);
+                }
+            }
+
+
+            for (Liike valittuLiike : valitutLiiketMuokkaus) {
+                valittuLiike.setTreeniohjelma(treeniohjelma);
+                liikeService.create(valittuLiike);
+            }
+
+            treeniohjelma.setLiikkeet(valitutLiiketMuokkaus);
 
             ohjelmaService.editById(treeniohjelma.getId(), treeniohjelma);
 

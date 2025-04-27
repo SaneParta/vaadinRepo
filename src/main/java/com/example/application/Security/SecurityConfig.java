@@ -25,8 +25,19 @@ public class SecurityConfig extends VaadinWebSecurity {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         super.configure(http);
+
+        http.logout(logout -> logout
+                .logoutUrl("/logout")  // Lisää tämä
+                .logoutSuccessUrl("/login")
+                .deleteCookies("JSESSIONID", "remember-me")
+                .invalidateHttpSession(true)
+                .permitAll()
+        );
+
         setLoginView(http, LoginView.class);
     }
+
+
 
 
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
